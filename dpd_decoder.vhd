@@ -87,5 +87,7 @@ begin
             end if;
         end if;
     end process;
+	 
+	 output <= d2 & d1 & d0;
 
 end Behavioral;
