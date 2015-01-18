@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   23:46:18 01/12/2015
+-- Create Date:   22:54:25 01/18/2015
 -- Design Name:   
--- Module Name:   D:/work/vhdl/decimal64-addition-core/operand_alignment_and_swapping_test.vhd
+-- Module Name:   D:/work/vhdl/decimal64-addition-core/oacsu_test.vhd
 -- Project Name:  decimal64-addition-core
 -- Target Device:  
 -- Tool versions:  
@@ -30,12 +30,12 @@ USE ieee.std_logic_1164.ALL;
  
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
-USE ieee.numeric_std.ALL;
+--USE ieee.numeric_std.ALL;
  
-ENTITY operand_alignment_and_swapping_test IS
-END operand_alignment_and_swapping_test;
+ENTITY oacsu_test IS
+END oacsu_test;
  
-ARCHITECTURE behavior OF operand_alignment_and_swapping_test IS 
+ARCHITECTURE behavior OF oacsu_test IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
@@ -43,14 +43,17 @@ ARCHITECTURE behavior OF operand_alignment_and_swapping_test IS
     PORT(
          ca1 : IN  std_logic_vector(63 downto 0);
          cb1 : IN  std_logic_vector(63 downto 0);
-         sa1 : IN  std_logic;
-         sb1 : IN  std_logic;
          ea1 : IN  std_logic_vector(9 downto 0);
          eb1 : IN  std_logic_vector(9 downto 0);
+         sa1 : IN  std_logic;
+         sb1 : IN  std_logic;
+         operation : IN  std_logic;
          cas : OUT  std_logic_vector(63 downto 0);
          cbs : OUT  std_logic_vector(63 downto 0);
-         lsa : OUT  natural;
-         er1 : OUT  std_logic_vector(9 downto 0)
+         lsa : OUT  std_logic_vector(4 downto 0);
+         rsa : OUT  std_logic_vector(4 downto 0);
+         er1 : OUT  std_logic_vector(9 downto 0);
+         eop : OUT  std_logic
         );
     END COMPONENT;
     
@@ -58,18 +61,21 @@ ARCHITECTURE behavior OF operand_alignment_and_swapping_test IS
    --Inputs
    signal ca1 : std_logic_vector(63 downto 0) := (others => '0');
    signal cb1 : std_logic_vector(63 downto 0) := (others => '0');
-   signal sa1 : std_logic := '0';
-   signal sb1 : std_logic := '0';
    signal ea1 : std_logic_vector(9 downto 0) := (others => '0');
    signal eb1 : std_logic_vector(9 downto 0) := (others => '0');
+   signal sa1 : std_logic := '0';
+   signal sb1 : std_logic := '0';
+   signal operation : std_logic := '0';
 
  	--Outputs
    signal cas : std_logic_vector(63 downto 0);
    signal cbs : std_logic_vector(63 downto 0);
-   signal lsa : natural;
+   signal lsa : std_logic_vector(4 downto 0);
+   signal rsa : std_logic_vector(4 downto 0);
    signal er1 : std_logic_vector(9 downto 0);
-	
-	signal c52zero : std_logic_vector(51 downto 0) := (others => '1');
+   signal eop : std_logic;
+   
+   signal zero56 : std_logic_vector(55 downto 0) := (others => '1');
  
 BEGIN
  
@@ -77,40 +83,52 @@ BEGIN
    uut: operand_alignment_and_swapping PORT MAP (
           ca1 => ca1,
           cb1 => cb1,
-          sa1 => sa1,
-          sb1 => sb1,
           ea1 => ea1,
           eb1 => eb1,
+          sa1 => sa1,
+          sb1 => sb1,
+          operation => operation,
           cas => cas,
           cbs => cbs,
           lsa => lsa,
-          er1 => er1
+          rsa => rsa,
+          er1 => er1,
+          eop => eop
         );
  
- 
-	-- TODO: extend testbench
 
    -- Stimulus process
    stim_proc: process
    begin		
-		
-		sa1 <= '0';
-		sb1 <= '0';
-		ca1 <= (others => '0');
-		cb1 <= (others => '0');
-		ea1 <= (others => '0');
-		eb1 <= (others => '0');
-      wait for 10ns;
-		
-		sa1 <= '0';
-		sb1 <= '0';
-		ca1 <= (others => '1');
-		cb1 <= "000000000000" & c52zero;
-		ea1 <= "0000011111";
-		eb1 <= "1000011111";
-      wait for 10ns;
 
-      -- insert stimulus here 
+        wait for 10ns;
+        
+        ea1 <= (others => '0');
+        eb1 <= (others => '0');
+        ca1 <= (others => '0');
+        cb1 <= (others => '0');
+        sa1 <= '0';
+        sb1 <= '1';
+        operation <= '0';
+        wait for 10ns;
+        
+        ea1 <= "1111111111";
+        eb1 <= "1110000000";
+        ca1 <= (others => '1');
+        cb1 <= (others => '0');
+        sa1 <= '1';
+        sb1 <= '1';
+        operation <= '0';
+        wait for 10ns;
+        
+        ea1 <= "1110011111";
+        eb1 <= "1010001100";
+        ca1 <= "00000000" & zero56;
+        cb1 <= (others => '0');
+        sa1 <= '1';
+        sb1 <= '1';
+        operation <= '1';
+        wait for 10ns;
 
       wait;
    end process;
