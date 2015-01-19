@@ -37,8 +37,9 @@ entity DBS is
      cbs : in std_logic_vector(63 downto 0);
      rsa : in  std_logic_vector(4 downto 0);
      lsa : in  std_logic_vector(4 downto 0);
-     ca2 : out std_logic_vector(63 downto 0);
-     cb2 : out std_logic_vector(63 downto 0)
+     ca2 : out std_logic_vector(71 downto 0);
+     cb2 : out std_logic_vector(71 downto 0);
+     sticky : out std_logic     
      );
      
 end DBS;
@@ -50,7 +51,7 @@ signal cbs_srr_16, cbs_srr_8, cbs_srr_4, cbs_srr_2, cbs_srr_1 : std_logic_vector
 signal t4, t3, t2, t1, t0 : std_logic;
 signal t4_v, t3_v, t2_v, t1_V, t0_V : std_logic := '0';
 signal m4, m3, m2, m1, m0 : std_logic;  
-signal sticky : std_logic;
+
 
 
 begin
@@ -69,6 +70,8 @@ cbs_mux_2 <= cbs_mux_3        when rsa(2) = '0' else cbs_srr_4 & "00000000";
 cbs_mux_1 <= cbs_mux_2        when rsa(1) = '0' else cbs_srr_2 & "00000000";
 cbs_mux_0 <= cbs_mux_1        when rsa(0) = '0' else cbs & "00000000";
 
+--cb2 output
+cb2 <= cbs_mux_0;
 
 --sticky bit generation
 --T bits
@@ -129,5 +132,7 @@ m0 <= t0 and rsa(0);
  
 --sticky bit
 sticky <= m0 or m1 or m2 or m3 or m4;  
+
+
 
 end Behavioral;
