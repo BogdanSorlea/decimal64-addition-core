@@ -75,48 +75,48 @@ cbs_mux_0 <= cbs_mux_1        when rsa(0) = '0' else cbs & "00000000";
 
 
 process(cbs)
-variable i : natural;
+  variable i : natural;
 begin
-for i in 63 downto 0 loop
-  t4_v <= t4_v xor cbs(i);
-end loop;
+  for i in 63 downto 0 loop
+    t4_v <= t4_v xor cbs(i);
+  end loop;
 end process;
 t4 <= t4_v;
 
 
 process(cbs_mux_4)
-variable i : natural;
+  variable i : natural;
 begin
-for i in 31 downto 0 loop
-  t3_v <= t3_v xor cbs_mux_4(i);
-end loop;
+  for i in 31 downto 0 loop
+    t3_v <= t3_v xor cbs_mux_4(i);
+  end loop;
 end process;
 t3 <= t3_v;
 
 process(cbs_mux_3)
-variable i : natural;
+  variable i : natural;
 begin
-for i in 15 downto 0 loop
-  t2_v <= t2_v xor cbs_mux_3(i);
-end loop;
+  for i in 15 downto 0 loop
+    t2_v <= t2_v xor cbs_mux_3(i);
+  end loop;
 end process;
 t2 <= t2_v;
 
 process(cbs_mux_2)
-variable i:  natural;
+  variable i:  natural;
 begin
-for i in 7 downto 0 loop
-  t1_v <= t1_v xor cbs_mux_2(i);
-end loop;
+  for i in 7 downto 0 loop
+    t1_v <= t1_v xor cbs_mux_2(i);
+  end loop;
 end process;
 t1 <= t1_v;
 
 process(cbs_mux_1)
-variable i:  natural;
+  variable i:  natural;
 begin
-for i in 3 downto 0 loop
-  t0_v <= t0_v xor cbs_mux_1(i);
-end loop;
+  for i in 3 downto 0 loop
+    t0_v <= t0_v xor cbs_mux_1(i);
+  end loop;
 end process;
 t0 <= t0_v;
 --masking t*
