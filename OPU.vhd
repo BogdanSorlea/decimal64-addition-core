@@ -37,6 +37,7 @@ entity OPU is
     cb2 : in std_logic_vector(71 downto 0);
     operation : in std_logic;
     rounding : in std_logic;
+    sticky_bit : in std_logic;
     ca3 : out std_logic_vector(75 downto 0);   --19 digits
     cb3 : out std_logic_vector(75 downto 0)
     );
