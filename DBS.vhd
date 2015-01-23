@@ -38,96 +38,64 @@ entity DBS is
      rsa : in  std_logic_vector(4 downto 0);
      lsa : in  std_logic_vector(4 downto 0);
      ca2 : out std_logic_vector(63 downto 0);
-     cb2 : out std_logic_vector(63 downto 0)
+     cb2 : out std_logic_vector(71 downto 0);
+     sticky : out std_logic     
      );
      
 end DBS;
 
 architecture Behavioral of DBS is
 
-signal cbs_mux_4, cbs_mux_3, cbs_mux_2, cbs_mux_1, cbs_mux_0 : std_logic_vector(71 downto 0); 
-signal cbs_srr_16, cbs_srr_8, cbs_srr_4, cbs_srr_2, cbs_srr_1 : std_logic_vector(63 downto 0);
-signal t4, t3, t2, t1, t0 : std_logic;
-signal t4_v, t3_v, t2_v, t1_V, t0_V : std_logic := '0';
-signal m4, m3, m2, m1, m0 : std_logic;  
-signal sticky : std_logic;
+signal cas_s, ca2_s : std_logic_vector(63 downto 0);
+signal cbs_s : std_logic_vector(63 downto 0);
+signal cb2_s : std_logic_vector(71 downto 0);
+signal rsa_s, lsa_s : std_logic_vector(4 downto 0);
+signal sticky_s : std_logic;  
 
+component LDBS 
+    Port (
+     cas : in std_logic_vector(63 downto 0);
+     lsa : in  std_logic_vector(4 downto 0);
+     ca2 : out std_logic_vector(63 downto 0)   
+     );
+     
+end component;
+
+component RDBS 
+    Port (
+     cbs : in std_logic_vector(63 downto 0);
+     rsa : in  std_logic_vector(4 downto 0);
+     cb2 : out std_logic_vector(71 downto 0);
+     sticky : out std_logic     
+     );
+     
+end component;
 
 begin
 
---right shifters for CB
-cbs_srr_16 <= "0000000000000000" & cbs(63 downto 16 );
-cbs_srr_8 <= "00000000" & cbs(63 downto 8 );
-cbs_srr_4 <= "0000" & cbs(63 downto 4 );
-cbs_srr_2 <= "00" & cbs(63 downto 2 );
+--inputs
+cbs_s <= cbs;
+cas_s <= cas;
+rsa_s <=rsa;
+lsa_s <=lsa;
+
+rdbs_i: rdbs PORT MAP (
+     cbs => cbs_s,
+     rsa => rsa_s,
+     cb2 => cb2_s,
+     sticky => sticky_s
+     );
+        
+ldbs_i: ldbs PORT MAP (
+          cas => cas_s,
+          lsa => lsa_s,
+          ca2 => ca2_s
+          );    
 
 
---cascaded muxes for CB
-cbs_mux_4 <= cbs & "00000000" when rsa(4) = '0' else cbs_srr_16 & "00000000";
-cbs_mux_3 <= cbs_mux_4        when rsa(3) = '0' else cbs_srr_8 & "00000000";
-cbs_mux_2 <= cbs_mux_3        when rsa(2) = '0' else cbs_srr_4 & "00000000"; 
-cbs_mux_1 <= cbs_mux_2        when rsa(1) = '0' else cbs_srr_2 & "00000000";
-cbs_mux_0 <= cbs_mux_1        when rsa(0) = '0' else cbs & "00000000";
-
-
---sticky bit generation
---T bits
-
-
-process(cbs)
-variable i : natural;
-begin
-for i in 63 downto 0 loop
-  t4_v <= t4_v xor cbs(i);
-end loop;
-end process;
-t4 <= t4_v;
-
-
-process(cbs_mux_4)
-variable i : natural;
-begin
-for i in 31 downto 0 loop
-  t3_v <= t3_v xor cbs_mux_4(i);
-end loop;
-end process;
-t3 <= t3_v;
-
-process(cbs_mux_3)
-variable i : natural;
-begin
-for i in 15 downto 0 loop
-  t2_v <= t2_v xor cbs_mux_3(i);
-end loop;
-end process;
-t2 <= t2_v;
-
-process(cbs_mux_2)
-variable i:  natural;
-begin
-for i in 7 downto 0 loop
-  t1_v <= t1_v xor cbs_mux_2(i);
-end loop;
-end process;
-t1 <= t1_v;
-
-process(cbs_mux_1)
-variable i:  natural;
-begin
-for i in 3 downto 0 loop
-  t0_v <= t0_v xor cbs_mux_1(i);
-end loop;
-end process;
-t0 <= t0_v;
---masking t*
-
-m4 <= t4 and rsa(4);
-m3 <= t3 and rsa(3);
-m2 <= t2 and rsa(2);
-m1 <= t1 and rsa(1);
-m0 <= t0 and rsa(0);
- 
---sticky bit
-sticky <= m0 or m1 or m2 or m3 or m4;  
+--outputs
+ca2 <= ca2_s;
+cb2 <= cb2_s;
+sticky <= sticky_s;
 
 end Behavioral;
