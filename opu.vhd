@@ -21,6 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -45,12 +46,12 @@ end OPU;
 
 architecture Behavioral of OPU is
 
-signal ca3_s, cb3_s : std_logic_vector(75 downto 0);
+signal ca3_s, cb3_s, ca3_c : std_logic_vector(75 downto 0); --19 digits
 signal zero : std_logic_vector(3 downto 0);
 signal R, S : std_logic_vector(3 downto 0);
 signal sticky_digit : std_logic_vector(3 downto 0);
-
-
+signal add6 : std_logic_vector(3 downto 0) := "0110";
+signal i: natural;
 
 
 begin
@@ -72,9 +73,9 @@ end process;
              
 
 --injection values for different rounding modes
---rounding mode: roundTowardsZero = 0000 
+--rounding mode: roundTowardsZero = 000
 -- ......
---rounding mode: roundAwayZero = 1000
+--rounding mode: roundAwayZero = 110
 process(operation, rounding)
 begin
     case (rounding) is
@@ -117,5 +118,40 @@ begin
                   S <= "0000";
         end case;              
 end process;
+
+
+--Operand placement
+process(ca2, cb2, operation)
+begin
+    if operation = '1' then
+        ca3_s <= ca2 & "0000" & R & S;
+        cb3_s <= cb2 & sticky_digit;
+    else
+        ca3_s <= "0000" & ca2 & R & S;
+        cb3_s <= "0000" & cb2(71 downto 4) & sticky_digit;
+    end if;
+end process;
+
+--Pre correction , adding "six" to each figitin BCD to ca3_S
+process(ca3_s)
+    variable i :natural;
+begin
+    for i in 0 to 18 loop
+        ca3_c((i+1)*4-1 downto i*4) <=  std_logic_vector(unsigned(ca3_s((i+1)*4-1 downto i*4)) + unsigned(add6));   
+    end loop;
+end process;           
+
+
+process(ca3_s, ca3_c, cb3_s, operation)
+begin
+    if operation = '1' then
+        ca3 <= ca3_s;
+        cb3 <= not cb3_s;
+    else
+        ca3 <= ca3_c;
+        cb3 <= cb3_s;
+    end if;
+end process;        
+        
 
 end Behavioral;
