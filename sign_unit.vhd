@@ -30,14 +30,15 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity sign_unit is
+
+    port (
+        eop, sa1, swap, c1_msb : in std_logic;
+        sr1 : out std_logic
+    );
+
 end sign_unit;
 
 architecture Behavioral of sign_unit is
-
-    port (
-        eop, sa1, sb1, swap, c1_msb : in std_logic;
-        sr1 : out std_logic
-    );
 
 begin
 

@@ -25,3 +25,15 @@ xst/*
 *.lso
 netgen/
 netgen/*
+_ngo/
+_ngo/*
+*.bld
+*.ncd
+*.ngd
+*.par
+*.pcf
+*.map
+*.mrp
+*.ngm
+xlnx_auto_0_xdb/
+xlnx_auto_0_xdb/*
