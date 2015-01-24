@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Company:  DTU 
+-- Student: Istvan Szonyi (s131153@student.dtu.dk) 
 -- 
 -- Create Date: 01/19/2015 11:48:06 PM
 -- Design Name: 
@@ -34,13 +34,13 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity OPU is
     Port (
-    ca2 : in std_logic_vector(63 downto 0);
-    cb2 : in std_logic_vector(71 downto 0);
-    operation : in std_logic;
-    rounding : in std_logic_vector(2 downto 0);
-    sticky_bit : in std_logic;
-    ca3 : out std_logic_vector(75 downto 0);   --19 digits
-    cb3 : out std_logic_vector(75 downto 0)
+        ca2 : in std_logic_vector(63 downto 0);
+        cb2 : in std_logic_vector(71 downto 0);
+        operation : in std_logic;
+        rounding : in std_logic_vector(2 downto 0);
+        sticky_bit : in std_logic;
+        ca3 : out std_logic_vector(75 downto 0);   --19 digits
+        cb3 : out std_logic_vector(75 downto 0)
     );
 end OPU;
 
@@ -73,9 +73,9 @@ end process;
              
 
 --injection values for different rounding modes
---rounding mode: roundTowardsZero = 000
+--rounding mode: roundTowardsZero = 0000 
 -- ......
---rounding mode: roundAwayZero = 110
+--rounding mode: roundAwayZero = 1000
 process(operation, rounding)
 begin
     case (rounding) is
@@ -121,7 +121,7 @@ end process;
 
 
 --Operand placement
-process(ca2, cb2, operation)
+process(ca2, cb2, operation, R, S, sticky_digit)
 begin
     if operation = '1' then
         ca3_s <= ca2 & "0000" & R & S;
