@@ -109,7 +109,7 @@ architecture Behavioral of decimal64_adder_no_conversions is
     
     component sru is
         port (
-            ucr_lsd : in std_logic_vector(11 downto 0);   
+            ucr_lsd : in std_logic_vector(7 downto 0);   
             cr1 : in std_logic_vector(63 downto 0);
             f2 : in std_logic_vector(15 downto 0);
             rounding : in std_logic_vector(2 downto 0);
@@ -155,8 +155,8 @@ begin
         ca2, cb2, operation, eop, swap, sa1, sb1, rounding, sticky, tmp_ca3, tmp_cb3, tmp_sign_inj
     );
     
-    ca3 <= x"900_0050_0000_0000_0050";
-    cb3 <= x"000_0200_0000_0001_0AFF";
+    ca3 <= x"200_0000_0001_0000_0050";
+    cb3 <= x"FFF_FFFF_FFFF_6FFF_FAFF";
     sign_inj <= '0';
     
     addition: component addition_module port map (
@@ -168,7 +168,7 @@ begin
     );
     
     shift_and_round: component sru port map (
-        cr1(11 downto 0), cr1(75 downto 12), f2, rounding, sign_inj, cr2
+        cr1(11 downto 4), cr1(75 downto 12), f2, rounding, sign_inj, cr2
     );
 
     r1 <= cr2;
