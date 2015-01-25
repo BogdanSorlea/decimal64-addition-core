@@ -92,9 +92,8 @@ begin
         for i in 1 to 75 loop
             if tmp_ucr(i) = '1' and tmp_f1(i-1) = '1' then
                 tmp_f1(i) <= '1';
-            elsif tmp_f1(i-1) = '1' then
-                tmp_f1(i) <= '1';
-                exit;
+            else
+                tmp_f1(i) <= '0';
             end if;
         end loop;
         
@@ -175,7 +174,7 @@ begin
     c1 <= tmp_c1(19 downto 1);
     tmp_ucr_f2gen <= tmp_ucr(75 downto 12);
     ucr <= tmp_ucr(75 downto 0);
-    f1 <= tmp_f1;
+    f1 <= tmp_f1(74 downto 0) & '1' when tmp_f1(0) = '1' else tmp_f1;
     f2 <= flag_add(4) when eop = '0' else flag_sub(4);
 
 end Behavioral;
