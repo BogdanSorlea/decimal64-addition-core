@@ -85,7 +85,7 @@ BEGIN
             --"0010" & std_logic_vector(to_unsigned(0, 36)) & "0001" & std_logic_vector(to_unsigned(0, 20)) & "000001010000";
       cb3 <= x"FFFFFFFFFFF6FFFFAFF";
             --"1111111111111111111111111111111111111111111101101111111111111111101011111111";
-      eop <= '1';
+      eop <= '0';
       
       wait for 10ns;
       
