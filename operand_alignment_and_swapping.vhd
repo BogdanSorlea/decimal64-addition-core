@@ -40,12 +40,12 @@ entity operand_alignment_and_swapping is
         cas, cbs : out std_logic_vector(63 downto 0);
         lsa, rsa : out std_logic_vector(4 downto 0);
         er1 : out std_logic_vector(9 downto 0);
-        eop : out std_logic
+        eop, swap : out std_logic
     );
 end operand_alignment_and_swapping;
 
 architecture Behavioral of operand_alignment_and_swapping is
-    signal swap, lsa_select_las : std_logic;
+    signal tmp_swap, lsa_select_las : std_logic;
     -- exponent is biased by +398;
     signal diffab, diffba, abs_ediff, rsa_maxterm, rsa_maxterm_diff, rsa_tmp : unsigned(9 downto 0);
     signal la1, lb1, las, lsa_tmp : unsigned(4 downto 0);
@@ -56,15 +56,15 @@ begin
     -- eac
     diffab <= unsigned(ea1) - unsigned(eb1);
     diffba <= unsigned(eb1) - unsigned(ea1);
-    swap <= '1' when unsigned(eb1) > unsigned(ea1) else '0';
+    tmp_swap <= '1' when unsigned(eb1) > unsigned(ea1) else '0';
     abs_ediff <= diffba when unsigned(eb1) > unsigned(ea1) else diffab;
     
     -- significand swapping
-    cas <= cb1 when swap = '1' else ca1;
-    cbs <= ca1 when swap = '1' else cb1;
+    cas <= cb1 when tmp_swap = '1' else ca1;
+    cbs <= ca1 when tmp_swap = '1' else cb1;
     
     -- eas MUX
-    eas <= ea1 when swap = '0' else eb1;
+    eas <= ea1 when tmp_swap = '0' else eb1;
     
     -- lead zero detection (LZD)
     lzd_a: process(ca1)
@@ -98,7 +98,7 @@ begin
     end process;
     
     -- las MUX
-    las <= lb1 when swap = '1' else la1;
+    las <= lb1 when tmp_swap = '1' else la1;
     
     -- rsa_maxterm, rsa, lsa_select_las and lsa
     rsa_maxterm_diff <= abs_ediff - las;
@@ -115,5 +115,8 @@ begin
     
     -- eop
     eop <= sa1 xor sb1 xor operation;
+    
+    -- swap
+    swap <= tmp_swap;
 
 end Behavioral;
