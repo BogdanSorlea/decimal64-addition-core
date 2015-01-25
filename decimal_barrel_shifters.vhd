@@ -31,20 +31,20 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity DBS is
-    Port (
-     cas : in std_logic_vector(63 downto 0);
-     cbs : in std_logic_vector(63 downto 0);
-     rsa : in  std_logic_vector(4 downto 0);
-     lsa : in  std_logic_vector(4 downto 0);
-     ca2 : out std_logic_vector(63 downto 0);
-     cb2 : out std_logic_vector(71 downto 0);
-     sticky : out std_logic     
-     );
+entity dbs is
+    port (
+        cas : in std_logic_vector(63 downto 0);
+        cbs : in std_logic_vector(63 downto 0);
+        rsa : in  std_logic_vector(4 downto 0);
+        lsa : in  std_logic_vector(4 downto 0);
+        ca2 : out std_logic_vector(63 downto 0);
+        cb2 : out std_logic_vector(71 downto 0);
+        sticky : out std_logic     
+    );
      
-end DBS;
+end dbs;
 
-architecture Behavioral of DBS is
+architecture Behavioral of dbs is
 
 signal cas_s, ca2_s : std_logic_vector(63 downto 0);
 signal cbs_s : std_logic_vector(63 downto 0);
@@ -53,49 +53,46 @@ signal rsa_s, lsa_s : std_logic_vector(4 downto 0);
 signal sticky_s : std_logic;  
 
 component LDBS 
-    Port (
-     cas : in std_logic_vector(63 downto 0);
-     lsa : in  std_logic_vector(4 downto 0);
-     ca2 : out std_logic_vector(63 downto 0)   
-     );
-     
+    port (
+        cas : in std_logic_vector(63 downto 0);
+        lsa : in  std_logic_vector(4 downto 0);
+        ca2 : out std_logic_vector(63 downto 0)   
+    );
 end component;
 
 component RDBS 
-    Port (
-     cbs : in std_logic_vector(63 downto 0);
-     rsa : in  std_logic_vector(4 downto 0);
-     cb2 : out std_logic_vector(71 downto 0);
-     sticky : out std_logic     
-     );
-     
+    port (
+        cbs : in std_logic_vector(63 downto 0);
+        rsa : in  std_logic_vector(4 downto 0);
+        cb2 : out std_logic_vector(71 downto 0);
+        sticky : out std_logic     
+    );
 end component;
 
 begin
 
---inputs
-cbs_s <= cbs;
-cas_s <= cas;
-rsa_s <=rsa;
-lsa_s <=lsa;
+    --inputs
+    cbs_s <= cbs;
+    cas_s <= cas;
+    rsa_s <= rsa;
+    lsa_s <= lsa;
 
-rdbs_i: rdbs PORT MAP (
-     cbs => cbs_s,
-     rsa => rsa_s,
-     cb2 => cb2_s,
-     sticky => sticky_s
-     );
+    rdbs_i: RDBS port map (
+        cbs => cbs_s,
+        rsa => rsa_s,
+        cb2 => cb2_s,
+        sticky => sticky_s
+    );
         
-ldbs_i: ldbs PORT MAP (
-          cas => cas_s,
-          lsa => lsa_s,
-          ca2 => ca2_s
-          );    
+    ldbs_i: LDBS port map (
+        cas => cas_s,
+        lsa => lsa_s,
+        ca2 => ca2_s
+    );    
 
-
---outputs
-ca2 <= ca2_s;
-cb2 <= cb2_s;
-sticky <= sticky_s;
+    --outputs
+    ca2 <= ca2_s;
+    cb2 <= cb2_s;
+    sticky <= sticky_s;
 
 end Behavioral;
