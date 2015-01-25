@@ -31,7 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity dbs is
+entity decimal_barrel_shifters is
     port (
         cas : in std_logic_vector(63 downto 0);
         cbs : in std_logic_vector(63 downto 0);
@@ -42,9 +42,9 @@ entity dbs is
         sticky : out std_logic     
     );
      
-end dbs;
+end decimal_barrel_shifters;
 
-architecture Behavioral of dbs is
+architecture Behavioral of decimal_barrel_shifters is
 
 signal cas_s, ca2_s : std_logic_vector(63 downto 0);
 signal cbs_s : std_logic_vector(63 downto 0);
@@ -52,7 +52,7 @@ signal cb2_s : std_logic_vector(71 downto 0);
 signal rsa_s, lsa_s : std_logic_vector(4 downto 0);
 signal sticky_s : std_logic;  
 
-component LDBS 
+component left_dbs 
     port (
         cas : in std_logic_vector(63 downto 0);
         lsa : in  std_logic_vector(4 downto 0);
@@ -60,7 +60,7 @@ component LDBS
     );
 end component;
 
-component RDBS 
+component right_dbs 
     port (
         cbs : in std_logic_vector(63 downto 0);
         rsa : in  std_logic_vector(4 downto 0);
@@ -71,28 +71,21 @@ end component;
 
 begin
 
-    --inputs
-    cbs_s <= cbs;
-    cas_s <= cas;
-    rsa_s <= rsa;
-    lsa_s <= lsa;
 
-    rdbs_i: RDBS port map (
-        cbs => cbs_s,
-        rsa => rsa_s,
-        cb2 => cb2_s,
+
+    rdbs_i: RIGHT_DBS port map (
+        cbs => cbs,
+        rsa => rsa,
+        cb2 => cb2,
         sticky => sticky_s
     );
         
-    ldbs_i: LDBS port map (
-        cas => cas_s,
-        lsa => lsa_s,
-        ca2 => ca2_s
+    ldbs_i: LEFT_DBS port map (
+        cas => cas,
+        lsa => lsa,
+        ca2 => ca2
     );    
 
-    --outputs
-    ca2 <= ca2_s;
-    cb2 <= cb2_s;
-    sticky <= sticky_s;
+
 
 end Behavioral;
