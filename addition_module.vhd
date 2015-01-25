@@ -37,8 +37,7 @@ entity addition_module is
         
         f2 : out std_logic_vector(15 downto 0);
         c1 : out std_logic_vector(18 downto 0);
-        ucr, f1 : out std_logic_vector(75 downto 0);
-        g_carry : out std_logic
+        ucr, f1 : out std_logic_vector(75 downto 0)
     );
 
 end addition_module;
@@ -85,7 +84,7 @@ begin
             );
     end generate;
     
-    f1_generate: process(tmp_ucr)
+    f1_generate: process(tmp_ucr, tmp_f1)
         variable i: natural := 0;
     begin
         
@@ -93,8 +92,9 @@ begin
         for i in 1 to 75 loop
             if tmp_ucr(i) = '1' and tmp_f1(i-1) = '1' then
                 tmp_f1(i) <= '1';
-            else
-                tmp_f1(i) <= '0';
+            elsif tmp_f1(i-1) = '1' then
+                tmp_f1(i) <= '1';
+                exit;
             end if;
         end loop;
         

@@ -47,8 +47,7 @@ ARCHITECTURE behavior OF addition_module_test IS
          f2 : OUT  std_logic_vector(15 downto 0);
          c1 : OUT  std_logic_vector(18 downto 0);
          ucr : OUT  std_logic_vector(75 downto 0);
-         f1 : OUT  std_logic_vector(75 downto 0);
-         g_carry : OUT  std_logic
+         f1 : OUT  std_logic_vector(75 downto 0)
         );
     END COMPONENT;
     
@@ -63,7 +62,6 @@ ARCHITECTURE behavior OF addition_module_test IS
    signal c1 : std_logic_vector(18 downto 0);
    signal ucr : std_logic_vector(75 downto 0);
    signal f1 : std_logic_vector(75 downto 0);
-   signal g_carry : std_logic;
  
 BEGIN
  
@@ -75,8 +73,7 @@ BEGIN
           f2 => f2,
           c1 => c1,
           ucr => ucr,
-          f1 => f1,
-          g_carry => g_carry
+          f1 => f1
         );
  
 
@@ -84,8 +81,10 @@ BEGIN
    stim_proc: process
    begin		
       
-      ca3 <= "0010" & std_logic_vector(to_unsigned(0, 36)) & "0001" & std_logic_vector(to_unsigned(0, 20)) & "000001010000";
-      cb3 <= "1111111111111111111111111111111111111111111101101111111111111111101011111111";
+      ca3 <= x"2000000000100000050"; 
+            --"0010" & std_logic_vector(to_unsigned(0, 36)) & "0001" & std_logic_vector(to_unsigned(0, 20)) & "000001010000";
+      cb3 <= x"FFFFFFFFFFF6FFFFAFF";
+            --"1111111111111111111111111111111111111111111101101111111111111111101011111111";
       eop <= '1';
       
       wait for 10ns;
