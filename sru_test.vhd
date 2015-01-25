@@ -38,7 +38,7 @@ architecture Behavioral of sru_test is
 
  Component sru 
     Port (
-       ucr_lsd : in std_logic_vector(11 downto 0);   
+       ucr_lsd : in std_logic_vector(7 downto 0);   
        cr1 : in std_logic_vector(63 downto 0);
        f2 : in std_logic_vector(15 downto 0);
        rounding : in std_logic_vector(2 downto 0);
@@ -52,7 +52,7 @@ end component;
    signal f2 : std_logic_vector(15 downto 0) := (others => '0');
    signal cr1 : std_logic_vector(63 downto 0) := (others => '0');
    signal sign_inj : std_logic := '0';
-   signal ucr_lsd : std_logic_vector(11 downto 0);
+   signal ucr_lsd : std_logic_vector(7 downto 0);
    signal rounding : std_logic_vector(2 downto 0);
 
  	--Outputs
@@ -78,14 +78,14 @@ BEGIN
          
         f2 <= X"0000";
         cr1 <= X"0000_0000_0000_0000";
-        ucr_lsd <=  X"000";
+        ucr_lsd <=  X"00";
         rounding <= "000";
         sign_inj <= '0'; 
     
       wait for 60ns;
         f2 <= "0000000000011111";
         cr1 <= X"2000_0000_0000_9999";
-        ucr_lsd <=  X"550";
+        ucr_lsd <=  X"55";  --GR , s is not considered
         rounding <= "001";
         sign_inj <= '0';  
      wait;       
