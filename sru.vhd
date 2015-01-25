@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Company: DTU 
+-- Engineer: Istvan Szonyi (s131153@student.dtu.dk)
 -- 
 -- Create Date: 01/24/2015 11:25:07 PM
 -- Design Name: 
@@ -34,7 +34,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity sru is
     Port (
-        ucr_lsd : in std_logic_vector(11 downto 0);   
+        ucr_lsd : in std_logic_vector(11 downto 4);   
         cr1 : in std_logic_vector(63 downto 0);
         f2 : in std_logic_vector(15 downto 0);
         rounding : in std_logic_vector(2 downto 0);
@@ -59,8 +59,7 @@ end component;
 
 
 signal cr1_s : std_logic_vector(63 downto 0); 
-signal G, R, new_g, new_r, new_s : std_logic_vector(3 downto 0);
-signal S : std_logic_vector(3 downto 0) := "0000";
+signal G, R, new_g, new_r : std_logic_vector(3 downto 0) := "0000";
 signal r_carry, g_carry : std_logic; 
 
   
@@ -99,15 +98,15 @@ begin
                  G <= "1001";
                  R <= "0000";
                 else        
+                  G <= "0000";
                   R <= "0000";
-                  S <= "0000";
                 end if;  
           when "110" => 
-                  R <= "1001";
-                  S <= "1000";
+                  G <= "1001";
+                  R <= "1000";
           when others => 
+                  G <= "0000";
                   R <= "0000";
-                  S <= "0000";
         end case;              
 end process;
 
@@ -129,10 +128,7 @@ adding_g : bcd_adder port map(
      c_out=> g_carry  
    );
    
---just in case the S value   
-new_s <= ucr_lsd(3 downto 0);   
-
-
+ 
 --new CR2 computation
 process(f2, cr1, g_carry)
     variable i :natural;
