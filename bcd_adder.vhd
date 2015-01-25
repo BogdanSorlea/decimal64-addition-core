@@ -46,7 +46,7 @@ begin
 
 tmp_cin <= "0000" & c_in;
 
-process(a,b)
+process(a,b, tmp_sum, tmp_cin)
 begin
     tmp_sum <= std_logic_vector(unsigned('0' & a) + unsigned('0' & b) + unsigned(tmp_cin)); 
     if(tmp_sum > "01001") then
