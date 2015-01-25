@@ -56,8 +56,8 @@ begin
     -- eac
     diffab <= unsigned(ea1) - unsigned(eb1);
     diffba <= unsigned(eb1) - unsigned(ea1);
-    swap <= '1' when eb1 > ea1 else '0';
-    abs_ediff <= diffba when eb1 > ea1 else diffab;
+    swap <= '1' when unsigned(eb1) > unsigned(ea1) else '0';
+    abs_ediff <= diffba when unsigned(eb1) > unsigned(ea1) else diffab;
     
     -- significand swapping
     cas <= cb1 when swap = '1' else ca1;
@@ -73,9 +73,11 @@ begin
     begin
         lz := 0;
         for i in 15 downto 0 loop
-            if ca1(4*(i+1)-1 downto 4*i) = "0000" then
+            if unsigned(ca1(4*(i+1)-1 downto 4*i)) = 0 then
                 lz := 16-i;
-			end if;
+            else
+                exit;
+            end if;
 		end loop;
         la1 <= to_unsigned(lz, 5);
     end process;
@@ -86,8 +88,10 @@ begin
     begin
         lz := 0;
         for i in 15 downto 0 loop
-            if cb1(4*(i+1)-1 downto 4*i) = "0000" then
+            if unsigned(cb1(4*(i+1)-1 downto 4*i)) = 0 then
                 lz := 16-i;
+            else
+                exit;
 			end if;
 		end loop;
         lb1 <= to_unsigned(lz, 5);
@@ -101,7 +105,7 @@ begin
     rsa_maxterm <= rsa_maxterm_diff when rsa_maxterm_diff > 0 else to_unsigned(0, rsa_maxterm'length);
     rsa_tmp <= rsa_maxterm when rsa_maxterm < to_unsigned(19, rsa_maxterm'length) 
                     else to_unsigned(19, rsa_maxterm'length);
-    lsa_select_las <= '1' when abs_ediff - las > 0 else '0';
+    lsa_select_las <= '1' when unsigned(abs_ediff) - unsigned(las) > 0 else '0';
     lsa_tmp <= las when lsa_select_las = '1' else abs_ediff(4 downto 0);
     rsa <= std_logic_vector(resize(rsa_tmp, 5));
     lsa <= std_logic_vector(lsa_tmp);

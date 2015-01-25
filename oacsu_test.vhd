@@ -100,8 +100,6 @@ BEGIN
    -- Stimulus process
    stim_proc: process
    begin		
-
-        wait for 10ns;
         
         ea1 <= (others => '0');
         eb1 <= (others => '0');
@@ -128,6 +126,23 @@ BEGIN
         sa1 <= '1';
         sb1 <= '1';
         operation <= '1';
+        wait for 10ns;
+        
+        ea1 <= "1010001100";
+        eb1 <= "1110011111";
+        ca1 <= (others => '0');
+        cb1 <= "00000000" & zero56;
+        sa1 <= '1';
+        sb1 <= '1';
+        operation <= '1';
+        wait for 10ns;
+        
+        ea1 <= "0111010100"; -- 85 with -383 bias
+        eb1 <= "0111100011"; -- 100 with -383 bias
+        ca1 <= x"9000050000000000";
+        cb1 <= x"0000200000000010";
+        sa1 <= '0';
+        sb1 <= '1';
         wait for 10ns;
 
       wait;
