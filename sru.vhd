@@ -21,6 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -58,7 +59,7 @@ end component;
 
 
 signal cr1_s : std_logic_vector(63 downto 0); 
-signal G, R, new_g, new_r : std_logic_vector(3 downto 0);
+signal G, R, new_g, new_r, new_s : std_logic_vector(3 downto 0);
 signal S : std_logic_vector(3 downto 0) := "0000";
 signal r_carry, g_carry : std_logic; 
 
@@ -128,6 +129,23 @@ adding_g : bcd_adder port map(
      c_out=> g_carry  
    );
    
-   
+--just in case the S value   
+new_s <= ucr_lsd(3 downto 0);   
+
+
+--new CR2 computation
+process(f2, cr1, g_carry)
+    variable i :natural;
+begin
+    for i in 0 to 15 loop
+        if cr1((i+1)*4-1 downto i*4) = "1001" and g_carry = '1' and f2(i) = '1' then
+            cr1_s((i+1)*4-1 downto i*4) <= "0000";
+        elsif cr1((i+1)*4-1 downto i*4) < "1001" and g_carry = '1' and f2(i) = '1' then
+            cr1_s((i+1)*4-1 downto i*4) <= std_logic_vector(unsigned(cr1((i+1)*4-1 downto i*4)) + "0001");
+        else 
+            cr1_s((i+1)*4-1 downto i*4) <= cr1((i+1)*4-1 downto i*4);
+        end if;    
+    end loop;
+end process;         
 
 end Behavioral;
