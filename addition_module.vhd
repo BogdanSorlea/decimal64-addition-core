@@ -65,6 +65,7 @@ architecture Behavioral of addition_module is
     signal tmp_f1 : std_logic_vector(75 downto 0) := (others => '0');
     signal tmp_ucr : std_logic_vector(75 downto 0);
     signal tmp_ucr_f2gen : std_logic_vector(63 downto 0);
+    signal tmp_f2 : std_logic_vector(15 downto 0);
     signal flag_add, flag_sub : flag;
     signal grs_propagate : std_logic;
 
@@ -175,7 +176,8 @@ begin
     tmp_ucr_f2gen <= tmp_ucr(75 downto 12);
     ucr <= tmp_ucr(75 downto 0);
     f1 <= tmp_f1(74 downto 0) & '1' when tmp_f1(0) = '1' else tmp_f1;
-    f2 <= flag_add(4) when eop = '0' else flag_sub(4);
+    tmp_f2 <= flag_add(4) when eop = '0' else flag_sub(4);
+    f2 <= tmp_f2(14 downto 0) & '1' when tmp_f2(0) = '1' else tmp_f2;
 
 end Behavioral;
 
