@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: DTU 
--- Engineer: Istvan Szonyi (s131153@student.dtu.dk)
+-- Company: 
+-- Engineer: 
 -- 
 -- Create Date: 01/24/2015 11:25:07 PM
 -- Design Name: 
@@ -34,7 +34,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity sru is
     Port (
-        ucr_lsd : in std_logic_vector(11 downto 4);   
+        ucr_lsd : in std_logic_vector(7 downto 0);   -- ucr_lsd(11 downto 4)
         cr1 : in std_logic_vector(63 downto 0);
         f2 : in std_logic_vector(15 downto 0);
         rounding : in std_logic_vector(2 downto 0);
@@ -113,7 +113,7 @@ end process;
 --adding R and G, skipping S, since we always add zero
 
 adding_r : bcd_adder port map(
-     a => ucr_lsd(7 downto 4),
+     a => ucr_lsd(3 downto 0),
      b => R,
      c_in => '0',
      sum  => new_r,  
@@ -121,7 +121,7 @@ adding_r : bcd_adder port map(
    );
 
 adding_g : bcd_adder port map(
-     a => ucr_lsd(11 downto 8),
+     a => ucr_lsd(7 downto 4),
      b => G,
      c_in => r_carry,
      sum  => new_g,  
