@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company:  DTU 
--- Student: Istvan Szonyi (s131153@student.dtu.dk) 
+-- Company: 
+-- Engineer: 
 -- 
 -- Create Date: 01/19/2015 11:48:06 PM
 -- Design Name: 
@@ -54,9 +54,9 @@ architecture Behavioral of OPU is
 
 signal ca3_s, cb3_s, ca3_c : std_logic_vector(75 downto 0); --19 digits
 signal zero : std_logic_vector(3 downto 0);
-signal R, S : std_logic_vector(3 downto 0);
+signal R, S : std_logic_vector(3 downto 0) :="0000" ;
 signal sticky_digit : std_logic_vector(3 downto 0);
-signal add6 : std_logic_vector(3 downto 0) := "0110";
+--signal add6 : std_logic_vector(3 downto 0) := "0110";
 signal i: natural;
 signal sign_inj_s : std_logic;
 
@@ -96,7 +96,7 @@ begin
             S <= "0000";     
         when "010" => 
             R <= "0100";
-            S <= "1000";
+            S <= "1001";
         when "011" => 
             R <= "0101";
             S <= "0000";  
@@ -106,21 +106,21 @@ begin
                 R <= "0000";
                 S <= "0000";
             else        
-                R <= "1000";
-                S <= "1000";
+                R <= "1001";
+                S <= "1001";
             end if;
  --Round toward Negative             
         when "101" => 
              if sign_inj_s = '1' then
-                 R <= "1000";
-                 S <= "1000";
+                 R <= "1001";
+                 S <= "1001";
                 else        
                   R <= "0000";
                   S <= "0000";
                 end if;  
           when "110" => 
-                  R <= "1000";
-                  S <= "1000";
+                  R <= "1001";
+                  S <= "1001";
           when others => 
                   R <= "0000";
                   S <= "0000";
@@ -145,7 +145,7 @@ process(ca3_s)
     variable i :natural;
 begin
     for i in 0 to 18 loop
-        ca3_c((i+1)*4-1 downto i*4) <=  std_logic_vector(unsigned(ca3_s((i+1)*4-1 downto i*4)) + unsigned(add6));   
+        ca3_c((i+1)*4-1 downto i*4) <=  std_logic_vector(unsigned(ca3_s((i+1)*4-1 downto i*4)) + "0110");   
     end loop;
 end process;           
 
@@ -163,4 +163,3 @@ end process;
         
 
 end Behavioral;
-
