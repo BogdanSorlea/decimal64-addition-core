@@ -43,8 +43,8 @@ end RDBS;
 
 architecture Behavioral of RDBS is
 
-signal cbs_mux_4, cbs_mux_3, cbs_mux_2, cbs_mux_1, cbs_mux_0 : std_logic_vector(71 downto 0); 
-signal cbs_srr_16, cbs_srr_8, cbs_srr_4, cbs_srr_2, cbs_srr_1 : std_logic_vector(63 downto 0);
+signal cbs_e,cbs_mux_4, cbs_mux_3, cbs_mux_2, cbs_mux_1, cbs_mux_0 : std_logic_vector(71 downto 0); 
+signal cbs_srr_16, cbs_srr_8, cbs_srr_4, cbs_srr_2, cbs_srr_1 : std_logic_vector(71 downto 0);
 signal t4, t3, t2, t1, t0 : std_logic;
 signal t4_v, t3_v, t2_v, t1_V, t0_V : std_logic := '0';
 signal m4, m3, m2, m1, m0 : std_logic;  
@@ -53,28 +53,30 @@ signal m4, m3, m2, m1, m0 : std_logic;
 
 begin
 
+    cbs_e <= cbs & "00000000";
+
 --right shifters for CB
-cbs_srr_16 <= "0000000000000000" & cbs(63 downto 16 );
-cbs_srr_8 <= "00000000" & cbs(63 downto 8 );
-cbs_srr_4 <= "0000" & cbs(63 downto 4 );
-cbs_srr_2 <= "00" & cbs(63 downto 2 );
+    cbs_srr_16 <= "0000000000000000" & cbs_e(71 downto 16 );
+    cbs_srr_8 <= "00000000" & cbs_e(71 downto 8 );
+    cbs_srr_4 <= "0000" & cbs_e(71 downto 4 );
+    cbs_srr_2 <= "00" & cbs_e(71 downto 2 );
 
 
 --cascaded muxes for CB
-cbs_mux_4 <= cbs & "00000000" when rsa(4) = '0' else cbs_srr_16 & "00000000";
-cbs_mux_3 <= cbs_mux_4        when rsa(3) = '0' else cbs_srr_8 & "00000000";
-cbs_mux_2 <= cbs_mux_3        when rsa(2) = '0' else cbs_srr_4 & "00000000"; 
-cbs_mux_1 <= cbs_mux_2        when rsa(1) = '0' else cbs_srr_2 & "00000000";
-cbs_mux_0 <= cbs_mux_1        when rsa(0) = '0' else cbs & "00000000";
+    cbs_mux_4 <= cbs_e      when rsa(4) = '0' else cbs_srr_16;
+    cbs_mux_3 <= cbs_mux_4  when rsa(3) = '0' else cbs_srr_8;
+    cbs_mux_2 <= cbs_mux_3  when rsa(2) = '0' else cbs_srr_4; 
+    cbs_mux_1 <= cbs_mux_2  when rsa(1) = '0' else cbs_srr_2;
+    cbs_mux_0 <= cbs_mux_1  when rsa(0) = '0' else cbs_e;
 
 --cb2 output
-cb2 <= cbs_mux_0;
+    cb2 <= cbs_mux_0;
 
 --sticky bit generation
 --T bits
 
 
-process(cbs)
+process(cbs, t4_v)
   variable i : natural;
 begin
   for i in 63 downto 0 loop
@@ -84,7 +86,7 @@ end process;
 t4 <= t4_v;
 
 
-process(cbs_mux_4)
+process(cbs_mux_4, t3_v)
   variable i : natural;
 begin
   for i in 31 downto 0 loop
@@ -93,7 +95,7 @@ begin
 end process;
 t3 <= t3_v;
 
-process(cbs_mux_3)
+process(cbs_mux_3, t2_v)
   variable i : natural;
 begin
   for i in 15 downto 0 loop
@@ -102,7 +104,7 @@ begin
 end process;
 t2 <= t2_v;
 
-process(cbs_mux_2)
+process(cbs_mux_2, t1_v)
   variable i:  natural;
 begin
   for i in 7 downto 0 loop
@@ -111,7 +113,7 @@ begin
 end process;
 t1 <= t1_v;
 
-process(cbs_mux_1)
+process(cbs_mux_1, t0_v)
   variable i:  natural;
 begin
   for i in 3 downto 0 loop
@@ -121,14 +123,14 @@ end process;
 t0 <= t0_v;
 --masking t*
 
-m4 <= t4 and rsa(4);
-m3 <= t3 and rsa(3);
-m2 <= t2 and rsa(2);
-m1 <= t1 and rsa(1);
-m0 <= t0 and rsa(0);
+    m4 <= t4 and rsa(4);
+    m3 <= t3 and rsa(3);
+    m2 <= t2 and rsa(2);
+    m1 <= t1 and rsa(1);
+    m0 <= t0 and rsa(0);
  
 --sticky bit
-sticky <= m0 or m1 or m2 or m3 or m4;  
+    sticky <= m0 or m1 or m2 or m3 or m4;  
 
 
 
