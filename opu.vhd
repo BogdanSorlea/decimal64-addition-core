@@ -36,11 +36,17 @@ entity OPU is
     Port (
         ca2 : in std_logic_vector(63 downto 0);
         cb2 : in std_logic_vector(71 downto 0);
+        --for Sign_Inj
         operation : in std_logic;
+        eop : in std_logic;
+        swap : in std_logic;
+        sa1, sb1 : in std_logic;
         rounding : in std_logic_vector(2 downto 0);
+        --
         sticky_bit : in std_logic;
         ca3 : out std_logic_vector(75 downto 0);   --19 digits
-        cb3 : out std_logic_vector(75 downto 0)
+        cb3 : out std_logic_vector(75 downto 0);
+        sign_inj : out std_logic
     );
 end OPU;
 
@@ -52,10 +58,13 @@ signal R, S : std_logic_vector(3 downto 0);
 signal sticky_digit : std_logic_vector(3 downto 0);
 signal add6 : std_logic_vector(3 downto 0) := "0110";
 signal i: natural;
+signal sign_inj_s : std_logic;
 
 
 begin
 
+sign_inj_s <= (not(eop and swap) and sa1) or ((eop and swap) and (operation xor sb1));
+sign_inj <= sign_inj_s;
 
 --sticky digit generation
 -- will be changed with foor loop iteration later
@@ -76,7 +85,7 @@ end process;
 --rounding mode: roundTowardsZero = 0000 
 -- ......
 --rounding mode: roundAwayZero = 1000
-process(operation, rounding)
+process(sign_inj_s, rounding)
 begin
     case (rounding) is
         when "000" => 
@@ -91,10 +100,9 @@ begin
         when "011" => 
             R <= "0101";
             S <= "0000";  
---Round Toward Poitive               
--- need to review the sign bit/operation condition                   
+--Round Toward Poitive                                  
         when "100" => 
-            if operation = '1' then
+            if sign_inj_s = '1' then
                 R <= "0000";
                 S <= "0000";
             else        
@@ -103,7 +111,7 @@ begin
             end if;
  --Round toward Negative             
         when "101" => 
-             if operation = '1' then
+             if sign_inj_s = '1' then
                  R <= "1000";
                  S <= "1000";
                 else        
@@ -142,9 +150,9 @@ begin
 end process;           
 
 
-process(ca3_s, ca3_c, cb3_s, operation)
+process(ca3_s, ca3_c, cb3_s, eop)
 begin
-    if operation = '1' then
+    if eop = '1' then
         ca3 <= ca3_s;
         cb3 <= not cb3_s;
     else
@@ -155,3 +163,4 @@ end process;
         
 
 end Behavioral;
+
