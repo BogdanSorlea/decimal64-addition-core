@@ -31,7 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity RDBS is
+entity Right_DBS is
     Port (
      cbs : in std_logic_vector(63 downto 0);
      rsa : in  std_logic_vector(4 downto 0);
@@ -39,14 +39,13 @@ entity RDBS is
      sticky : out std_logic     
      );
      
-end RDBS;
+end Right_DBS;
 
-architecture Behavioral of RDBS is
+architecture Behavioral of Right_DBS is
 
 signal cbs_e,cbs_mux_4, cbs_mux_3, cbs_mux_2, cbs_mux_1, cbs_mux_0 : std_logic_vector(71 downto 0); 
 signal cbs_srr_16, cbs_srr_8, cbs_srr_4, cbs_srr_2, cbs_srr_1 : std_logic_vector(71 downto 0);
 signal t4, t3, t2, t1, t0 : std_logic;
-signal t4_v, t3_v, t2_v, t1_V, t0_V : std_logic := '0';
 signal m4, m3, m2, m1, m0 : std_logic;  
 
 
@@ -55,19 +54,12 @@ begin
 
     cbs_e <= cbs & "00000000";
 
---right shifters for CB
-    cbs_srr_16 <= "0000000000000000" & cbs_e(71 downto 16 );
-    cbs_srr_8 <= "00000000" & cbs_e(71 downto 8 );
-    cbs_srr_4 <= "0000" & cbs_e(71 downto 4 );
-    cbs_srr_2 <= "00" & cbs_e(71 downto 2 );
-
-
 --cascaded muxes for CB
-    cbs_mux_4 <= cbs_e      when rsa(4) = '0' else cbs_srr_16;
-    cbs_mux_3 <= cbs_mux_4  when rsa(3) = '0' else cbs_srr_8;
-    cbs_mux_2 <= cbs_mux_3  when rsa(2) = '0' else cbs_srr_4; 
-    cbs_mux_1 <= cbs_mux_2  when rsa(1) = '0' else cbs_srr_2;
-    cbs_mux_0 <= cbs_mux_1  when rsa(0) = '0' else cbs_e;
+    cbs_mux_4 <= cbs_e      when rsa(4) = '0' else X"0000_0000_0000_0000" & cbs_e(71 downto 64); 
+    cbs_mux_3 <= cbs_mux_4  when rsa(3) = '0' else X"0000_0000" & cbs_mux_4(71 downto 32);
+    cbs_mux_2 <= cbs_mux_3  when rsa(2) = '0' else X"0000" & cbs_mux_3(71 downto 16);
+    cbs_mux_1 <= cbs_mux_2  when rsa(1) = '0' else X"00" & cbs_mux_2(71 downto 8);
+    cbs_mux_0 <= cbs_mux_1  when rsa(0) = '0' else X"0" & cbs_mux_1(71 downto 4);
 
 --cb2 output
     cb2 <= cbs_mux_0;
@@ -76,51 +68,61 @@ begin
 --T bits
 
 
-process(cbs, t4_v)
+process(cbs)
   variable i : natural;
+  variable temp: std_logic := '0';
 begin
-  for i in 63 downto 0 loop
-    t4_v <= t4_v xor cbs(i);
+  for i in cbs'range loop
+    temp :=  temp or cbs(i);
   end loop;
+  t4 <= temp;
 end process;
-t4 <= t4_v;
 
 
-process(cbs_mux_4, t3_v)
+
+process(cbs_mux_4)
   variable i : natural;
+  variable t3_v: std_logic := '0';
 begin
-  for i in 31 downto 0 loop
-    t3_v <= t3_v xor cbs_mux_4(i);
+  for i in cbs_mux_4'range loop
+    t3_v := t3_v or cbs_mux_4(i);
   end loop;
-end process;
 t3 <= t3_v;
+end process;
 
-process(cbs_mux_3, t2_v)
+
+process(cbs_mux_3)
   variable i : natural;
+  variable t2_v: std_logic := '0';
 begin
-  for i in 15 downto 0 loop
-    t2_v <= t2_v xor cbs_mux_3(i);
+  for i in cbs_mux_3'range loop
+    t2_v := t2_v or cbs_mux_3(i);
   end loop;
-end process;
 t2 <= t2_v;
-
-process(cbs_mux_2, t1_v)
-  variable i:  natural;
-begin
-  for i in 7 downto 0 loop
-    t1_v <= t1_v xor cbs_mux_2(i);
-  end loop;
 end process;
+
+
+process(cbs_mux_2)
+  variable i:  natural;
+   variable t1_v: std_logic := '0';
+begin
+  for i in cbs_mux_2'range loop
+    t1_v := t1_v xor cbs_mux_2(i);
+  end loop;
 t1 <= t1_v;
-
-process(cbs_mux_1, t0_v)
-  variable i:  natural;
-begin
-  for i in 3 downto 0 loop
-    t0_v <= t0_v xor cbs_mux_1(i);
-  end loop;
 end process;
+
+
+process(cbs_mux_1)
+  variable i:  natural;
+  variable t0_v: std_logic := '0';
+begin
+  for i in cbs_mux_1'range loop
+    t0_v := t0_v or cbs_mux_1(i);
+  end loop;
 t0 <= t0_v;
+end process;
+
 --masking t*
 
     m4 <= t4 and rsa(4);
