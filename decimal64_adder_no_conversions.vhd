@@ -57,7 +57,7 @@ architecture Behavioral of decimal64_adder_no_conversions is
         );
     end component;
     
-    component dbs is
+    component decimal_barrel_shifters is
         port (
             cas : in std_logic_vector(63 downto 0);
             cbs : in std_logic_vector(63 downto 0);
@@ -147,7 +147,7 @@ begin
         ca1, cb1, ea1, eb1, sa1, sb1, operation, cas, cbs, lsa, rsa, er1, eop, swap
     );
     
-    decimal_barrel_shifters: component dbs port map (
+    dbs: component decimal_barrel_shifters port map (
         cas, cbs, rsa, lsa, ca2, cb2, sticky
     );
     
