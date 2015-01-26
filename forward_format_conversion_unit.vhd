@@ -34,11 +34,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity forward_format_conversion_unit is
     port (
         a, b : in std_logic_vector(63 downto 0);
-        operation : in std_logic;
         sa1, sb1 : out std_logic;
         ea1, eb1 : out std_logic_vector(9 downto 0);
-        ca1, cb1 : out std_logic_vector(63 downto 0); 
-        eop : out std_logic
+        ca1, cb1 : out std_logic_vector(63 downto 0)
     );
 end forward_format_conversion_unit;
 
@@ -58,18 +56,16 @@ begin
     sa1 <= a(63);
     sb1 <= b(63);
     
-    eop <= sa1 xor sb1 xor operation;
-    
     -- http://en.wikipedia.org/wiki/Decimal64_floating-point_format#Densely_packed_decimal_significand_field
     
-    esela <= b(62 downto 61);
+    esela <= a(62 downto 61);
     eselb <= b(62 downto 61);
     ea1 <= esela & a(57 downto 50) when esela = "00" or esela = "01" or esela = "10" else
             a(60 downto 59) & a(57 downto 50);
     eb1 <= eselb & b(57 downto 50) when eselb = "00" or eselb = "01" or eselb = "10" else
             b(60 downto 59) & b(57 downto 50);
 
-    cba(63 downto 60) <= "0" & a(60 downto 58) when esela = "00" or esela = "01" or esela = "10" 
+    ca1(63 downto 60) <= "0" & a(60 downto 58) when esela = "00" or esela = "01" or esela = "10" 
                             else "100" & a(58);         
     cb1(63 downto 60) <= "0" & b(60 downto 58) when eselb = "00" or eselb = "01" or eselb = "10" 
                             else "100" & b(58);

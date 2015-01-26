@@ -41,26 +41,18 @@ ARCHITECTURE behavior OF decimal64_adder_no_conversions_test IS
  
     COMPONENT decimal64_adder_no_conversions
     PORT(
-         ca1 : IN  std_logic_vector(63 downto 0);
-         cb1 : IN  std_logic_vector(63 downto 0);
-         ea1 : IN  std_logic_vector(9 downto 0);
-         eb1 : IN  std_logic_vector(9 downto 0);
-         sa1 : IN  std_logic;
-         sb1 : IN  std_logic;
-         operation : IN  std_logic;
-         rounding : IN std_logic_vector(2 downto 0);
-         r1 : OUT  std_logic_vector(63 downto 0)
+        a, b : in std_logic_vector(63 downto 0);
+        operation : in std_logic;
+        rounding : in std_logic_vector(2 downto 0);
+        
+        r1 : out std_logic_vector(63 downto 0)
         );
     END COMPONENT;
     
 
    --Inputs
-   signal ca1 : std_logic_vector(63 downto 0) := (others => '0');
-   signal cb1 : std_logic_vector(63 downto 0) := (others => '0');
-   signal ea1 : std_logic_vector(9 downto 0) := (others => '0');
-   signal eb1 : std_logic_vector(9 downto 0) := (others => '0');
-   signal sa1 : std_logic := '0';
-   signal sb1 : std_logic := '0';
+   signal a : std_logic_vector(63 downto 0) := (others => '0');
+   signal b : std_logic_vector(63 downto 0) := (others => '0');
    signal operation : std_logic := '0';
    signal rounding : std_logic_vector(2 downto 0) := (others => '0');
 
@@ -71,12 +63,8 @@ BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
    uut: decimal64_adder_no_conversions PORT MAP (
-          ca1 => ca1,
-          cb1 => cb1,
-          ea1 => ea1,
-          eb1 => eb1,
-          sa1 => sa1,
-          sb1 => sb1,
+          a => a,
+          b => b,
           operation => operation,
           rounding => rounding,
           r1 => r1
@@ -87,15 +75,17 @@ BEGIN
    stim_proc: process
    begin		
 
-        sa1 <= '0';
-        sb1 <= '1';
-        ca1 <= x"9000050000000000";
-        cb1 <= x"0000200000000010";
-        ea1 <= "0111010100"; -- 85 with -383 bias
-        eb1 <= "0111100011"; -- 100 with -383 bias
+        a <= "0" & "11011" & "11010100" 
+                & "0000000000" & "0001010000" & "0000000000" & "0000000000" & "0000000000"; -- + 9000050000000000 e85
+        b <= "1" & "01000" & "11100011" 
+                & "0000000000" & "0100000000" & "0000000000" & "0000000000" & "0000010000"; -- - 0000200000000010 e100
         operation <= '0';
         rounding <= "001"; -- roundTiesToAway
-
+        -- r1 should be: + 2000000000010000 e96
+        -- which in decimal64 DPD is
+        -- 0_01010_11011111_0000000000_0000000000_0000000000_0000010000_0000000000
+        -- aka 2B7C000000004000
+        -- TODO: figure out why sign is wrong
         wait for 10 ns;
 
 
