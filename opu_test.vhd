@@ -36,7 +36,7 @@ end tb_opu;
 
 architecture Behavioral of tb_opu is
 
- COMPONENT opu
+COMPONENT opu
     PORT(
            ca2 : in std_logic_vector(63 downto 0);
            cb2 : in std_logic_vector(71 downto 0);
@@ -101,50 +101,15 @@ BEGIN
      
       wait for 60ns;
 
-      ca2 <= X"0000_0000_0000_0000";
-      cb2 <= X"00_0000_0000_0000_0000";
-      eop <= '0';
-      swap <= '0';
-      sa1 <= '0';
-      sb1 <= '0';
-      operation <= '0';
-      rounding <= "000";
-      sticky_bit <= '0';
-      
-      wait for 60ns;
-      
-     ca2 <= X"0000_0000_0000_0001";
-     cb2 <= X"00_0000_0000_0000_0001";
-     eop <= '0';
-     swap <= '0';
-     sa1 <= '0';
-     sb1 <= '0';
-     operation <= '0';
-     rounding <= "001";
-     sticky_bit <= '0';
-     
-      wait for 60ns;
-      
-      ca2 <= X"0000_0000_0000_0010";
-      cb2 <= X"00_0000_0000_0000_0011";
-      eop <= '0';
-      swap <= '0';
+      ca2 <= X"2000_0000_0010_0000";
+      cb2 <= X"0000_0000_0009_0000_50";
+      eop <= '1';
+      swap <= '1';
       sa1 <= '1';
-      sb1 <= '0';     
+      sb1 <= '1';
       operation <= '0';
-      rounding <= "010";
-      sticky_bit <= '1';      
-
-        wait for 60ns;
-     ca2 <= X"0000_0000_0000_7777";
-     cb2 <= X"00_0000_0000_0000_1111";
-     eop <= '1';
-     swap <= '1';
-     sa1 <= '0';
-     sb1 <= '1';     
-     operation <= '0';
-     rounding <= "010";
-     sticky_bit <= '0';
+      rounding <= "001";
+      sticky_bit <= '0';
      
      wait;
    
