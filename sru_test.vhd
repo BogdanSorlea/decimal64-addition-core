@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 01/25/2015 11:17:16 PM
+-- Create Date: 01/24/2015 11:49:07 AM
 -- Design Name: 
--- Module Name: test_dbs - Behavioral
+-- Module Name: tb_opu - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,69 +31,66 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity test_dbs is
-end test_dbs;
+entity sru_test is
+end sru_test;
 
-architecture Behavioral of test_dbs is
+architecture Behavioral of sru_test is
 
-component DBS 
+ Component sru 
     Port (
-     cas : in std_logic_vector(63 downto 0);
-     cbs : in std_logic_vector(63 downto 0);
-     rsa : in  std_logic_vector(4 downto 0);
-     lsa : in  std_logic_vector(4 downto 0);
-     ca2 : out std_logic_vector(63 downto 0);
-     cb2 : out std_logic_vector(71 downto 0);
-     sticky : out std_logic     
-     );
+       ucr_lsd : in std_logic_vector(7 downto 0);   
+       cr1 : in std_logic_vector(63 downto 0);
+       f2 : in std_logic_vector(15 downto 0);
+       rounding : in std_logic_vector(2 downto 0);
+       sign_inj : in std_logic;
+       cr2: out std_logic_vector(63 downto 0)
+       );
 end component;
-
-
-signal cas, cbs : std_logic_vector(63 downto 0);
-signal rsa, lsa : std_logic_vector(4 downto 0); 
-
---outputs
-signal  sticky : std_logic;
-signal ca2 : std_logic_vector(63 downto 0);
-signal cb2 :std_logic_vector(71 downto 0);
     
-     
 
-begin
+   --Inputs
+   signal f2 : std_logic_vector(15 downto 0) := (others => '0');
+   signal cr1 : std_logic_vector(63 downto 0) := (others => '0');
+   signal sign_inj : std_logic := '0';
+   signal ucr_lsd : std_logic_vector(7 downto 0);
+   signal rounding : std_logic_vector(2 downto 0);
 
+ 	--Outputs
+   signal cr2 : std_logic_vector(63 downto 0);
+
+ 
+BEGIN
+ 
 	-- Instantiate the Unit Under Test (UUT)
-   uut: DBS PORT MAP (
-          cas => cas,
-          cbs => cbs,
-          rsa => rsa,
-          lsa => lsa, 
-          ca2 => ca2, 
-          cb2 => cb2,
-          sticky => sticky 
+   uut: sru PORT MAP (
+          f2 => f2,
+          cr1 => cr1,
+          ucr_lsd => ucr_lsd,
+          rounding => rounding,
+          sign_inj => sign_inj, 
+          cr2 => cr2
         );
  
 
    -- Stimulus process
    stim_proc: process
    begin		
-      
-      cas <= X"0000_0000_0000_0000";
-      cbs <= X"0000_0000_0000_0000";
-      rsa <= "00000";
-      lsa <= "00000";
-      
-     
+         
+        f2 <= X"0000";
+        cr1 <= X"0000_0000_0000_0000";
+        ucr_lsd <=  X"00";
+        rounding <= "000";
+        sign_inj <= '0'; 
+    
       wait for 60ns;
-
-      cas <= X"0000_2000_0000_0010";
-      cbs <= X"9000_0500_0000_0000";
-      rsa <= "01011";
-      lsa <= "00100";      
-      
-     
-     wait;
-   
+        f2 <= "0000000000011111";
+        cr1 <= X"2000_0000_0000_9999";
+        ucr_lsd <=  X"55";  --GR , s is not considered
+        rounding <= "001";
+        sign_inj <= '0';  
+     wait;       
    end process;
+
 
 
 end Behavioral;
