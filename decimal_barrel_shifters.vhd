@@ -77,7 +77,7 @@ begin
         cbs => cbs,
         rsa => rsa,
         cb2 => cb2,
-        sticky => sticky_s
+        sticky => sticky
     );
         
     ldbs_i: LEFT_DBS port map (
