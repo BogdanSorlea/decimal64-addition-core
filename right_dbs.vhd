@@ -48,10 +48,21 @@ signal cbs_srr_16, cbs_srr_8, cbs_srr_4, cbs_srr_2, cbs_srr_1 : std_logic_vector
 signal t4, t3, t2, t1, t0 : std_logic;
 signal m4, m3, m2, m1, m0 : std_logic;  
 
-
+--for masking T bits
+signal cbs_t4 : std_logic_vector(63 downto 0);
+signal cbs_t3 : std_logic_vector(31 downto 0);
+signal cbs_t2 : std_logic_vector(15 downto 0);
+signal cbs_t1 : std_logic_vector(7 downto 0);
+signal cbs_t0 : std_logic_vector(3 downto 0);
 
 begin
-
+    
+    cbs_t4 <= cbs;
+    cbs_t3 <= cbs_mux_4(31 downto 0);  
+    cbs_t2 <= cbs_mux_3(15 downto 0);
+    cbs_t1 <= cbs_mux_2(7 downto 0);
+    cbs_t0 <= cbs_mux_1(3 downto 0);
+    
     cbs_e <= cbs & "00000000";
 
 --cascaded muxes for CB
@@ -68,57 +79,57 @@ begin
 --T bits
 
 
-process(cbs)
+process(cbs_t4)
   variable i : natural;
   variable temp: std_logic := '0';
 begin
-  for i in cbs'range loop
-    temp :=  temp or cbs(i);
+  for i in cbs_t4'range loop
+    temp :=  temp or cbs_t4(i);
   end loop;
   t4 <= temp;
 end process;
 
 
 
-process(cbs_mux_4)
+process(cbs_t3)
   variable i : natural;
   variable t3_v: std_logic := '0';
 begin
-  for i in cbs_mux_4'range loop
-    t3_v := t3_v or cbs_mux_4(i);
+  for i in cbs_t3'range loop
+    t3_v := t3_v or cbs_t3(i);
   end loop;
 t3 <= t3_v;
 end process;
 
 
-process(cbs_mux_3)
+process(cbs_t2)
   variable i : natural;
   variable t2_v: std_logic := '0';
 begin
-  for i in cbs_mux_3'range loop
-    t2_v := t2_v or cbs_mux_3(i);
+  for i in cbs_t2'range loop
+    t2_v := t2_v or cbs_t2(i);
   end loop;
 t2 <= t2_v;
 end process;
 
 
-process(cbs_mux_2)
+process(cbs_t1)
   variable i:  natural;
    variable t1_v: std_logic := '0';
 begin
-  for i in cbs_mux_2'range loop
-    t1_v := t1_v xor cbs_mux_2(i);
+  for i in cbs_t1'range loop
+    t1_v := t1_v or cbs_t1(i);
   end loop;
 t1 <= t1_v;
 end process;
 
 
-process(cbs_mux_1)
+process(cbs_t0)
   variable i:  natural;
   variable t0_v: std_logic := '0';
 begin
-  for i in cbs_mux_1'range loop
-    t0_v := t0_v or cbs_mux_1(i);
+  for i in cbs_t0'range loop
+    t0_v := t0_v or cbs_t0(i);
   end loop;
 t0 <= t0_v;
 end process;
