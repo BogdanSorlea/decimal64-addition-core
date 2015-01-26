@@ -48,20 +48,16 @@ signal cbs_srr_16, cbs_srr_8, cbs_srr_4, cbs_srr_2, cbs_srr_1 : std_logic_vector
 signal t4, t3, t2, t1, t0 : std_logic;
 signal m4, m3, m2, m1, m0 : std_logic;  
 
---for masking T bits
-signal cbs_t4 : std_logic_vector(63 downto 0);
-signal cbs_t3 : std_logic_vector(31 downto 0);
-signal cbs_t2 : std_logic_vector(15 downto 0);
-signal cbs_t1 : std_logic_vector(7 downto 0);
-signal cbs_t0 : std_logic_vector(3 downto 0);
+----for masking T bits
+--signal cbs_t4 : std_logic_vector(63 downto 0);
+--signal cbs_t3 : std_logic_vector(31 downto 0);
+--signal cbs_t2 : std_logic_vector(15 downto 0);
+--signal cbs_t1 : std_logic_vector(7 downto 0);
+--signal cbs_t0 : std_logic_vector(3 downto 0);
 
 begin
     
-    cbs_t4 <= cbs;
-    cbs_t3 <= cbs_mux_4(31 downto 0);  
-    cbs_t2 <= cbs_mux_3(15 downto 0);
-    cbs_t1 <= cbs_mux_2(7 downto 0);
-    cbs_t0 <= cbs_mux_1(3 downto 0);
+
     
     cbs_e <= cbs & "00000000";
 
@@ -79,60 +75,67 @@ begin
 --T bits
 
 
-process(cbs_t4)
+process(cbs)
   variable i : natural;
   variable temp: std_logic := '0';
 begin
-  for i in cbs_t4'range loop
-    temp :=  temp or cbs_t4(i);
+  for i in cbs'range loop
+    temp :=  temp or cbs(i);
   end loop;
   t4 <= temp;
 end process;
 
+t3 <= cbs_mux_4(0) or cbs_mux_4(1) or cbs_mux_4(2) or cbs_mux_4(3) or cbs_mux_4(4) or cbs_mux_4(5) or cbs_mux_4(6) or cbs_mux_4(7)
+      or cbs_mux_4(8) or cbs_mux_4(9) or cbs_mux_4(10) or cbs_mux_4(11) or cbs_mux_4(12) or cbs_mux_4(13) or cbs_mux_4(14) or cbs_mux_4(15)
+      or cbs_mux_4(16) or cbs_mux_4(17) or cbs_mux_4(18) or cbs_mux_4(19) or cbs_mux_4(20) or cbs_mux_4(21) or cbs_mux_4(22) or cbs_mux_4(23)
+            or cbs_mux_4(24) or cbs_mux_4(25) or cbs_mux_3(26) or cbs_mux_4(27) or cbs_mux_4(28) or cbs_mux_4(29) or cbs_mux_4(30) or cbs_mux_4(31);
+
+--process(cbs_t3)
+--  variable i : natural;
+--  variable t3_v: std_logic := '0';
+--begin
+--  for i in cbs_t3'range loop
+--    t3_v := t3_v or cbs_t3(i);
+--  end loop;
+--t3 <= t3_v;
+--end process;
+
+t2 <= cbs_mux_2(0) or cbs_mux_2(1) or cbs_mux_2(2) or cbs_mux_2(3) or cbs_mux_2(4) or cbs_mux_2(5) or cbs_mux_2(6) or cbs_mux_2(7)
+      or cbs_mux_3(8) or cbs_mux_3(9) or cbs_mux_3(10) or cbs_mux_3(11) or cbs_mux_3(12) or cbs_mux_3(13) or cbs_mux_3(14) or cbs_mux_3(15);
+--process(cbs_t2)
+--  variable i : natural;
+--  variable t2_v: std_logic := '0';
+--begin
+--  for i in cbs_t2'range loop
+--    t2_v := t2_v or cbs_t2(i);
+--  end loop;
+--t2 <= t2_v;
+--end process;
+
+t1 <= cbs_mux_2(0) or cbs_mux_2(1) or cbs_mux_2(2) or cbs_mux_2(3) or cbs_mux_2(4) or cbs_mux_2(5) or cbs_mux_2(6) or cbs_mux_2(7);
+
+--process(cbs_t1)
+--  variable i:  natural;
+--   variable t1_v: std_logic := '0';
+--begin
+--  for i in cbs_t1'range loop
+--    t1_v := t1_v or cbs_t1(i);
+--  end loop;
+--t1 <= t1_v;
+--end process;
 
 
-process(cbs_t3)
-  variable i : natural;
-  variable t3_v: std_logic := '0';
-begin
-  for i in cbs_t3'range loop
-    t3_v := t3_v or cbs_t3(i);
-  end loop;
-t3 <= t3_v;
-end process;
+t0 <= cbs_mux_1(0) or cbs_mux_1(1) or cbs_mux_1(2) or cbs_mux_1(3); 
 
-
-process(cbs_t2)
-  variable i : natural;
-  variable t2_v: std_logic := '0';
-begin
-  for i in cbs_t2'range loop
-    t2_v := t2_v or cbs_t2(i);
-  end loop;
-t2 <= t2_v;
-end process;
-
-
-process(cbs_t1)
-  variable i:  natural;
-   variable t1_v: std_logic := '0';
-begin
-  for i in cbs_t1'range loop
-    t1_v := t1_v or cbs_t1(i);
-  end loop;
-t1 <= t1_v;
-end process;
-
-
-process(cbs_t0)
-  variable i:  natural;
-  variable t0_v: std_logic := '0';
-begin
-  for i in cbs_t0'range loop
-    t0_v := t0_v or cbs_t0(i);
-  end loop;
-t0 <= t0_v;
-end process;
+--process(cbs_t0)
+--  variable i:  natural;
+--  variable t0_v: std_logic := '0';
+--begin
+--  for i in cbs_t0'range loop
+--    t0_v := t0_v or cbs_t0(i);
+--  end loop;
+--t0 <= t0_v;
+--end process;
 
 --masking t*
 
