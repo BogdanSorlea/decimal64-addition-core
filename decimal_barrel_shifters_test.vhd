@@ -62,7 +62,7 @@ signal cb2 :std_logic_vector(71 downto 0);
 begin
 
 	-- Instantiate the Unit Under Test (UUT)
-   uut: decimal_barrel_shifters PORT MAP (
+   uut: DBS PORT MAP (
           cas => cas,
           cbs => cbs,
           rsa => rsa,
@@ -85,8 +85,8 @@ begin
      
       wait for 60ns;
 
-      cas <= X"0002_0000_0000_0010";
-      cbs <= X"9000_5000_0000_0000";
+      cas <= X"0000_2000_0000_0010";
+      cbs <= X"9000_0500_0000_0000";
       rsa <= "01011";
       lsa <= "00100";      
       
