@@ -68,9 +68,9 @@ sign_inj <= sign_inj_s;
 
 --sticky digit generation
 -- will be changed with foor loop iteration later
-process(cb2, sticky_bit, operation)
+process(cb2, sticky_bit, eop)
 begin
-    if operation = '1' then
+    if eop = '1' then
         sticky_digit <= "000" & sticky_bit;
     else
          sticky_digit(0) <= cb2(0) or cb2(1) or cb2(2) or cb2(3) or sticky_bit;
@@ -129,9 +129,9 @@ end process;
 
 
 --Operand placement
-process(ca2, cb2, operation, R, S, sticky_digit)
+process(ca2, cb2, eop, R, S, sticky_digit)
 begin
-    if operation = '1' then
+    if eop = '1' then
         ca3_s <= ca2 & "0000" & R & S;
         cb3_s <= cb2 & sticky_digit;
     else
