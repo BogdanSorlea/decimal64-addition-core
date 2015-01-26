@@ -127,7 +127,7 @@ architecture Behavioral of decimal64_adder_no_conversions is
     signal cb2 : std_logic_vector(71 downto 0);
     signal sticky : std_logic;
     
-    signal tmp_ca3, tmp_cb3 : std_logic_vector(75 downto 0);
+    signal ca3, cb3 : std_logic_vector(75 downto 0);
     signal sign_inj : std_logic;
     
     signal f2 : std_logic_vector(15 downto 0);
@@ -138,8 +138,8 @@ architecture Behavioral of decimal64_adder_no_conversions is
     signal cr2 : std_logic_vector(63 downto 0);
     
     -- testing signals
-    signal ca3, cb3 : std_logic_vector(75 downto 0);
-    signal tmp_sign_inj : std_logic;
+    --signal tmp_ca3, tmp_cb3 : std_logic_vector(75 downto 0);
+    --signal tmp_sign_inj : std_logic;
 
 begin
 
@@ -152,12 +152,12 @@ begin
     );
     
     precorrection_and_operand_placement: component opu port map (
-        ca2, cb2, operation, eop, swap, sa1, sb1, rounding, sticky, tmp_ca3, tmp_cb3, tmp_sign_inj
+        ca2, cb2, operation, eop, swap, sa1, sb1, rounding, sticky, ca3, cb3, sign_inj
     );
     
-    ca3 <= x"200_0000_0001_0000_0050";
-    cb3 <= x"FFF_FFFF_FFFF_6FFF_FAFF";
-    sign_inj <= '0';
+    --ca3 <= x"200_0000_0001_0000_0050";
+    --cb3 <= x"FFF_FFFF_FFFF_6FFF_FAFF";
+    --sign_inj <= '0';
     
     addition: component addition_module port map (
         ca3, cb3, eop, f2, c1, ucr, f1
