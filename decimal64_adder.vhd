@@ -29,7 +29,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity decimal64_adder_no_conversions is
+entity decimal64_adder is
 
     port (
         a, b : in std_logic_vector(63 downto 0);
@@ -39,9 +39,9 @@ entity decimal64_adder_no_conversions is
         r1 : out std_logic_vector(63 downto 0)
     );
 
-end decimal64_adder_no_conversions;
+end decimal64_adder;
 
-architecture Behavioral of decimal64_adder_no_conversions is
+architecture Behavioral of decimal64_adder is
 
     component forward_format_conversion_unit is
         port (
@@ -69,8 +69,8 @@ architecture Behavioral of decimal64_adder_no_conversions is
         port (
             cas : in std_logic_vector(63 downto 0);
             cbs : in std_logic_vector(63 downto 0);
-            rsa : in  std_logic_vector(4 downto 0);
-            lsa : in  std_logic_vector(4 downto 0);
+            rsa : in std_logic_vector(4 downto 0);
+            lsa : in std_logic_vector(4 downto 0);
             ca2 : out std_logic_vector(63 downto 0);
             cb2 : out std_logic_vector(71 downto 0);
             sticky : out std_logic     

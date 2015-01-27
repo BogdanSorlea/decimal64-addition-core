@@ -32,14 +32,14 @@ USE ieee.std_logic_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
  
-ENTITY decimal64_adder_no_conversions_test IS
-END decimal64_adder_no_conversions_test;
+ENTITY decimal64_adder_test IS
+END decimal64_adder_test;
  
-ARCHITECTURE behavior OF decimal64_adder_no_conversions_test IS 
+ARCHITECTURE behavior OF decimal64_adder_test IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT decimal64_adder_no_conversions
+    COMPONENT decimal64_adder
     PORT(
         a, b : in std_logic_vector(63 downto 0);
         operation : in std_logic;
@@ -62,7 +62,7 @@ ARCHITECTURE behavior OF decimal64_adder_no_conversions_test IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: decimal64_adder_no_conversions PORT MAP (
+   uut: decimal64_adder PORT MAP (
           a => a,
           b => b,
           operation => operation,
