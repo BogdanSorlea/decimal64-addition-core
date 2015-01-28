@@ -35,6 +35,8 @@ use IEEE.NUMERIC_STD.ALL;
 entity sru is
     Port (
         ucr_lsd : in std_logic_vector(7 downto 0);   -- ucr_lsd(11 downto 4)
+        er1 : in std_logic_vector(9 downto 0);
+        er2 : out std_logic_vector(9 downto 0);
         cr1 : in std_logic_vector(63 downto 0);
         f2 : in std_logic_vector(15 downto 0);
         rounding : in std_logic_vector(2 downto 0);
@@ -58,14 +60,18 @@ component bcd_adder
 end component;
 
 
-signal cr1_s : std_logic_vector(63 downto 0); 
+signal cr1_s, cr2_max : std_logic_vector(63 downto 0); 
 signal G, R, new_g, new_r : std_logic_vector(3 downto 0) := "0000";
 signal r_carry, g_carry : std_logic; 
 
   
 begin
 
-cr2 <= cr1 when cr1(63 downto 60) = "0000" else cr1_s;
+cr2_max <= X"1000_0000_0000_0000"; 
+
+cr2 <= cr1 when cr1(63 downto 60) = "0000" else 
+       cr2_max when cr1(63 downto 60) = "1001" and f2(15) ='1' and g_carry='1' else 
+       cr1_s;
 
 process(sign_inj, rounding)
 begin
@@ -142,6 +148,8 @@ begin
             cr1_s((i+1)*4-1 downto i*4) <= cr1((i+1)*4-1 downto i*4);
         end if;    
     end loop;
-end process;         
+end process; 
+
+er2 <= std_logic_vector(unsigned(er1) + "1") when cr1(63 downto 60) = "1001" and f2(15) ='1' and g_carry='1' else er1;         
 
 end Behavioral;
