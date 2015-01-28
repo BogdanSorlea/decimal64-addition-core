@@ -38,13 +38,15 @@ architecture Behavioral of sru_test is
 
  Component sru 
     Port (
-       ucr_lsd : in std_logic_vector(7 downto 0);   
-       cr1 : in std_logic_vector(63 downto 0);
-       f2 : in std_logic_vector(15 downto 0);
-       rounding : in std_logic_vector(2 downto 0);
-       sign_inj : in std_logic;
-       cr2: out std_logic_vector(63 downto 0)
-       );
+         ucr_lsd : in std_logic_vector(7 downto 0);   -- ucr_lsd(11 downto 4)
+         cr1 : in std_logic_vector(63 downto 0);
+         f2 : in std_logic_vector(15 downto 0);
+         rounding : in std_logic_vector(2 downto 0);
+         sign_inj : in std_logic;
+         er1 : in std_logic_vector(9 downto 0);
+         er2 : out std_logic_vector(9 downto 0);
+         cr2: out std_logic_vector(63 downto 0)
+         );
 end component;
     
 
@@ -54,7 +56,7 @@ end component;
    signal sign_inj : std_logic := '0';
    signal ucr_lsd : std_logic_vector(7 downto 0);
    signal rounding : std_logic_vector(2 downto 0);
-
+   signal er1, er2 : std_logic_vector(9 downto 0);
  	--Outputs
    signal cr2 : std_logic_vector(63 downto 0);
 
@@ -68,6 +70,8 @@ BEGIN
           ucr_lsd => ucr_lsd,
           rounding => rounding,
           sign_inj => sign_inj, 
+          er1 => er1,
+          er2 => er2,
           cr2 => cr2
         );
  
@@ -75,7 +79,8 @@ BEGIN
    -- Stimulus process
    stim_proc: process
    begin		
-         
+        
+        er1 <= "0000000000"; 
         f2 <= X"0000";
         cr1 <= X"0000_0000_0000_0000";
         ucr_lsd <=  X"00";
@@ -83,11 +88,30 @@ BEGIN
         sign_inj <= '0'; 
     
       wait for 60ns;
+      
+        er1 <= "1000000000";
         f2 <= "0000000000011111";
         cr1 <= X"2000_0000_0000_9999";
         ucr_lsd <=  X"55";  --GR , s is not considered
         rounding <= "001";
-        sign_inj <= '0';  
+        sign_inj <= '0'; 
+        
+        wait for 60ns;
+        er1 <= "0000000001";
+         f2 <= X"FFFF";
+         cr1 <= X"9999_9999_9999_9999";
+         ucr_lsd <=  X"55";  --GR , s is not considered
+         rounding <= "001";
+         sign_inj <= '0'; 
+         
+        wait for 60ns;
+        er1 <= "0101010101";
+         f2 <= X"0000";
+         cr1 <= X"0000_0000_5129_4568";
+         ucr_lsd <=  X"55";  --GR , s is not considered
+         rounding <= "001";
+         sign_inj <= '0'; 
+        wait;       
      wait;       
    end process;
 
